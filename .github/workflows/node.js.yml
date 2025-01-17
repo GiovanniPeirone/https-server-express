@@ -24,16 +24,23 @@ jobs:
 
     - run: npm ci
 
-    # Inicia el servidor y espera a que esté activo
     - name: Iniciar el servidor Express
       run: |
         nohup node index.js > server.log 2>&1 &
-        sleep 10 # Ajusta el tiempo si el servidor necesita más para inicializar
+        echo $! > server.pid
 
-    # Verifica que el servidor esté funcionando
-    - name: Verificar que el servidor esté disponible
+    - name: Esperar a que el servidor esté disponible
+      run: npx wait-on http://localhost:3000
+
+    - name: Verificar que el servidor esté funcionando
       run: curl -f http://localhost:3000 || exit 1
 
-    # Finaliza todos los procesos
+    - name: Mostrar logs del servidor
+      run: cat server.log
+
     - name: Detener el servidor
-      run: kill $(jobs -p)
+      run: |
+        if [ -f server.pid ]; then
+          kill $(cat server.pid)
+          rm server.pid
+        fi
