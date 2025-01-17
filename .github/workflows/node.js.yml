@@ -24,18 +24,16 @@ jobs:
 
     - run: npm ci
 
-    # Iniciar el servidor Express
+    # Inicia el servidor y lo mantiene corriendo hasta el final del workflow
     - name: Iniciar el servidor Express
-      run: node index.js &
+      run: |
+        nohup node index.js > server.log 2>&1 &
+        sleep 5 # Da tiempo al servidor para inicializar
 
-    # Esperar a que el servidor esté activo
-    - name: Esperar a que el servidor esté disponible
-      run: npx wait-on http://localhost:3000
-
-    # Verificar servidor con curl
+    # Verifica si el servidor responde correctamente
     - name: Verificar que el servidor esté funcionando
       run: curl -f http://localhost:3000 || exit 1
 
-    # Finalizar todos los procesos al terminar
-    - name: Finalizar procesos
+    # Detener el servidor al finalizar el workflow
+    - name: Detener el servidor
       run: kill $(jobs -p)
