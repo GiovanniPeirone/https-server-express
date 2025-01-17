@@ -1,0 +1,41 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Configurar Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - run: npm ci
+
+    # Iniciar el servidor Express
+    - name: Iniciar el servidor Express
+      run: node index.js &
+
+    # Esperar a que el servidor esté activo
+    - name: Esperar a que el servidor esté disponible
+      run: npx wait-on http://localhost:3000
+
+    # Verificar servidor con curl
+    - name: Verificar que el servidor esté funcionando
+      run: curl -f http://localhost:3000 || exit 1
+
+    # Finalizar todos los procesos al terminar
+    - name: Finalizar procesos
+      run: kill $(jobs -p)
