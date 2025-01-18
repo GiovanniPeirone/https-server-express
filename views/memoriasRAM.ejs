@@ -1,0 +1,26 @@
+<%- include("templates/head") %>
+<body>
+    <%- include("templates/header") %>
+    <main>
+        <div>
+            <% if (arrayMemoriasRAM.length > 0) { %>
+                <% arrayMemoriasRAM.forEach(memoria => { %>
+                    <div>
+                        <img src="<%= memoria.Imagen %>" alt="<%= memoria.nombre %>">
+                        <a href="<%= memoria.direccion %>">
+                            <h1><%= memoria.nombre %></h1>
+                            <p><%= memoria.id %></p>
+                        </a>
+                    </div>
+                    <script>
+                        console.log("URL de la imagen:", "<%= memoria.Imagen %>");
+                    </script>
+                <% }) %>
+            <% } else { %>
+                <p>No hay memorias RAM disponibles.</p>
+            <% } %>
+        </div>
+    </main>
+    <%- include("templates/footer") %>
+</body>
+</html>
