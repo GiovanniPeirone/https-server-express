@@ -35,7 +35,7 @@ jobs:
         echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list >/dev/null
         sudo apt update && sudo apt install -y ngrok jq
         # Autenticar ngrok con el authtoken almacenado en los secrets
-        ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+        ngrok authtoken ${{ NGROK_AUTH_TOKEN.NGROK_AUTH_TOKEN }}
 
     - name: Exponer aplicación con ngrok
       run: |
